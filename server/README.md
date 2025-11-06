@@ -47,7 +47,7 @@ server/
     ```bash
     cp .env.example .env
     ```
-    Fill in the necessary variables, especially your `MONGODB_URI` and `PORT`.
+    Fill in the necessary variables, especially your `MONGO_URI` and `PORT`.
 
 4.  **Run the development server:**
     ```bash
