@@ -49,7 +49,7 @@ client/
 3.  **Set up environment variables:**
     Create a `.env.local` file by copying the example:
     ```bash
-    cp .env.example .env.local
+    cp env.example.txt .env.local
     ```
     Fill in the necessary variables (like `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, and the backend API URL).
 
