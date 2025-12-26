@@ -2,7 +2,7 @@ import axios from "axios";
 import { ApiResponse } from "./types";
 
 const apiRequest = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/api`,
+  baseURL: process.env.SERVER_BASE_URL ? `${process.env.SERVER_BASE_URL}/api` : `http://localhost:8080/api`,
 });
 
 async function apiPost<T, K = unknown>(path: string, data: T) {
