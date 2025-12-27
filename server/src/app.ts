@@ -34,7 +34,7 @@ app.useRouter(
 );
 
 app.instance.get("/api/test", (req, res) => {
-  res.send("You are not allowed to access this route");
+  res.send("You are not allowed to access this route go to /");
 });
 
 

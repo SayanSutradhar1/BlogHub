@@ -66,11 +66,26 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
-            sudo docker system prune -af --volumes
-            sudo docker pull sayancode/blog-hub-client
+            set -e
+
             cd /home/ubuntu/blog-hub
-            sudo docker compose up -d --no-deps client
+
+            echo "Stopping client container if running..."
+            sudo docker compose stop client || true
+
+            echo "Removing client container if exists..."
+            sudo docker compose rm -f client || true
+
+            echo "Removing old client image if exists..."
+            sudo docker image rm -f sayancode/blog-hub-client || true
+
+            echo "Pulling new client image..."
+            sudo docker pull sayancode/blog-hub-client
+
+            echo "Starting client service..."
+            sudo docker compose up -d client
           EOF
+
 
   server:
     needs: check-changes
@@ -107,8 +122,22 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
-            sudo docker system prune -af --volumes
-            sudo docker pull sayancode/blog-hub-server
+            set -e
+
             cd /home/ubuntu/blog-hub
-            sudo docker compose up -d --no-deps server
+
+            echo "Stopping server container if running..."
+            sudo docker compose stop server || true
+
+            echo "Removing server container if exists..."
+            sudo docker compose rm -f server || true
+
+            echo "Removing old server image if exists..."
+            sudo docker image rm -f sayancode/blog-hub-server || true
+
+            echo "Pulling new server image..."
+            sudo docker pull sayancode/blog-hub-server
+
+            echo "Starting server service..."
+            sudo docker compose up -d server
           EOF
