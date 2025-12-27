@@ -1,0 +1,98 @@
+name: "Blog Hub CI/CD Pipeline"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      client-changed: ${{ steps.client-changed.outputs.client }}
+      server-changed: ${{ steps.server-changed.outputs.server }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes in client
+        id: client-changed
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            client: 
+              - 'client/**'
+
+      - name: Check for changes in server
+        id: server-changed
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            server: 
+              - 'server/**'
+
+  client:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    if: needs.check-changes.outputs.client-changed == 'true'
+    steps:
+      - name: "Checkout Client Changes"
+        uses: actions/checkout@v4
+
+      - name: "Creating Docker Image for Client"
+        run: |
+          cd client
+          docker build -t sayancode/blog-hub-client .
+      
+      - name: "Pushing Docker Image to Docker Hub"
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          docker push sayancode/blog-hub-client
+          docker logout
+
+      - name: "SSH Login and Deploy Client"
+        env:
+          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
+          HOST: ${{ secrets.SSH_HOST }}
+        run:
+          sudo apt-get update -y
+          ssh -i $SECRET_KEY -o StrictHostKeyChecking=no ubuntu@$HOST '
+          sudo docker pull sayancode/blog-hub-client &&
+          cd /home/ubuntu/blog-hub &&
+          sudo docker compose up -d --no-deps --build blog-hub-client && exit '
+
+  server:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    if: needs.check-changes.outputs.server-changed == 'true'
+    steps:
+      - name: "Checkout Server Changes"
+        uses: actions/checkout@v4
+
+      - name: "Creating Docker Image for Server"
+        run: |
+          cd server
+          docker build -t sayancode/blog-hub-server .
+      
+      - name: "Pushing Docker Image to Docker Hub"
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          docker push sayancode/blog-hub-server
+          docker logout
+
+      - name: "SSH Login and Deploy Server"
+        env:
+          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
+          HOST: ${{ secrets.SSH_HOST }}
+        run:
+          sudo apt-get update -y
+          ssh -i $SECRET_KEY -o StrictHostKeyChecking=no ubuntu@$HOST '
+          sudo docker pull sayancode/blog-hub-server &&
+           cd /home/ubuntu/blog-hub &&
+           sudo docker compose up -d --no-deps --build blog-hub-server && exit '
