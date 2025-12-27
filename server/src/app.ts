@@ -33,7 +33,7 @@ app.useRouter(
   }
 );
 
-app.instance.get("/", (req, res) => {
+app.instance.get("/api/test", (req, res) => {
   res.send("You are not authorized to access this route");
 });
 
