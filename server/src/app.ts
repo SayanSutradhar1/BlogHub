@@ -34,7 +34,7 @@ app.useRouter(
 );
 
 app.instance.get("/", (req, res) => {
-  res.send("You are not authorized to access this route");
+  res.send("Hello World");
 });
 
 
