@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const blogApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.SERVER_BASE_URL ? `${process.env.SERVER_BASE_URL}/api/blog` : "http://localhost:8080/api/blog",
+    baseUrl: process.env.NODE_ENV === "development" ? `http://localhost:8080/api/blog` : "https://13.203.167.206/api/blog",
   }),
   tagTypes: ["Blog"],
   endpoints: (builder) => ({

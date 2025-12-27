@@ -19,13 +19,7 @@ app.instance.use(express.json())
 app.instance.use(express.urlencoded({ extended: true }))
 
 
-if(process.env.NODE_ENV === "development"){
-  app.instance.use(
-    morgan(
-      'dev'
-    )
-  )
-}
+app.instance.use(morgan("dev"));
 
 
 app.useRouter(

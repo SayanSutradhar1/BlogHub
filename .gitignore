@@ -323,4 +323,8 @@ tags
 # Docker ###
 compose.yaml
 
+*.pem
+
+nginx*.conf
+
 # End of https://www.gitignore.io/api/node,vim,git,macos,linux,sublimetext

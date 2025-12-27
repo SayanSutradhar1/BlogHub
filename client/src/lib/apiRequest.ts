@@ -2,7 +2,7 @@ import axios from "axios";
 import { ApiResponse } from "./types";
 
 const apiRequest = axios.create({
-  baseURL: process.env.SERVER_BASE_URL ? `${process.env.SERVER_BASE_URL}/api` : `http://localhost:8080/api`,
+  baseURL: process.env.NODE_ENV === "development" ? `http://localhost:8080/api` : `https://13.203.167.206/api`,
 });
 
 async function apiPost<T, K = unknown>(path: string, data: T) {
