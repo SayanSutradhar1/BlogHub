@@ -128,7 +128,7 @@ export default function CreatePage() {
                 />
               </div>
 
-              <Button onClick={handleModalShow}>See the Preview</Button>
+              <Button onClick={handleModalShow}>Preview</Button>
 
               <div className="flex gap-4">
                 <Button
