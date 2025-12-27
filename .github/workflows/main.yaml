@@ -64,8 +64,8 @@ jobs:
       - name: "SSH Login and Deploy Client"
         env:
           HOST: ${{ secrets.SSH_HOST }}
-        run:
-          ssh -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
             sudo docker pull sayancode/blog-hub-client
             cd /home/ubuntu/blog-hub
             sudo docker compose up -d --no-deps blog-hub-client
@@ -105,7 +105,7 @@ jobs:
         env:
           HOST: ${{ secrets.SSH_HOST }}
         run:
-          ssh -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+          ssh i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
             sudo docker pull sayancode/blog-hub-server
             cd /home/ubuntu/blog-hub
             sudo docker compose up -d --no-deps blog-hub-server
