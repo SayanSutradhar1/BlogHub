@@ -13,6 +13,8 @@ export async function dbconnect() {
       dbName: process.env.DB_NAME,
     });
 
+    console.log("Database connected successfully")
+
     connectionStatus.isConnected = connection.connection.readyState === 1;
 
     connection.connection.on("connected", () => {

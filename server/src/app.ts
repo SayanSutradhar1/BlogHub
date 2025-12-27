@@ -33,6 +33,10 @@ app.useRouter(
   }
 );
 
+app.instance.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
 
 
 app.instance.use(errorMiddleware);
