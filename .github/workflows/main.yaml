@@ -52,17 +52,24 @@ jobs:
           echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
           docker push sayancode/blog-hub-client
           docker logout
+        
+      - name: "SSH Setup"
+        env: 
+          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SECRET_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: "SSH Login and Deploy Client"
         env:
-          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
           HOST: ${{ secrets.SSH_HOST }}
         run:
-          sudo apt-get update -y
-          ssh -i $SECRET_KEY -o StrictHostKeyChecking=no ubuntu@$HOST '
-          sudo docker pull sayancode/blog-hub-client &&
-          cd /home/ubuntu/blog-hub &&
-          sudo docker compose up -d --no-deps --build blog-hub-client && exit '
+          ssh -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+            sudo docker pull sayancode/blog-hub-client
+            cd /home/ubuntu/blog-hub
+            sudo docker compose up -d --no-deps blog-hub-client
+          EOF
 
   server:
     needs: check-changes
@@ -85,14 +92,21 @@ jobs:
           echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
           docker push sayancode/blog-hub-server
           docker logout
+        
+      - name: "SSH Setup"
+        env: 
+          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SECRET_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: "SSH Login and Deploy Server"
         env:
-          SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
           HOST: ${{ secrets.SSH_HOST }}
         run:
-          sudo apt-get update -y
-          ssh -i $SECRET_KEY -o StrictHostKeyChecking=no ubuntu@$HOST '
-          sudo docker pull sayancode/blog-hub-server &&
-           cd /home/ubuntu/blog-hub &&
-           sudo docker compose up -d --no-deps --build blog-hub-server && exit '
+          ssh -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+            sudo docker pull sayancode/blog-hub-server
+            cd /home/ubuntu/blog-hub
+            sudo docker compose up -d --no-deps blog-hub-server
+          EOF
