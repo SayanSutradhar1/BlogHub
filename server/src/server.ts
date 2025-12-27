@@ -33,7 +33,7 @@ class Application {
     this.instance = express();
     this.instance.use(express.json())
     this.instance.use(cors({
-        origin:["http://localhost:3000","https://13.203.167.206"],
+        origin:["http://localhost:3000","https://13.203.167.206","https://blog-hub.strangled.net"],
         credentials:true,
         methods:["GET","POST","PUT","DELETE"],
     }))
