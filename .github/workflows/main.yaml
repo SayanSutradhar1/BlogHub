@@ -66,6 +66,7 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+            sudo docker system prune -af --volumes
             sudo docker pull sayancode/blog-hub-client
             cd /home/ubuntu/blog-hub
             sudo docker compose up -d --no-deps client
@@ -106,6 +107,7 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+            sudo docker system prune -af --volumes
             sudo docker pull sayancode/blog-hub-server
             cd /home/ubuntu/blog-hub
             sudo docker compose up -d --no-deps server
